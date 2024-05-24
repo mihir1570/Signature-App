@@ -1,4 +1,4 @@
-/* styles.css */
+styles.css
 body {
     font-family: 'Roboto', sans-serif;
 }
@@ -48,6 +48,15 @@ canvas {
     background-color: #2779bd;
 }
 
+.btn-purple {
+    background-color: #8a3ffc;
+}
+
+.btn-purple:hover {
+    background-color: #6c1fd5;
+}
+
+
 
 .form-range {
     width: 100%;
@@ -64,3 +73,4 @@ canvas {
 .color-picker:focus {
     outline: none;
 }
+

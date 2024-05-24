@@ -192,3 +192,28 @@ document.addEventListener("DOMContentLoaded", function () {
     ctx.lineWidth = thicknessInput.value;
     ctx.strokeStyle = colorInput.value;
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
