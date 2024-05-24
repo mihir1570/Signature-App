@@ -5,48 +5,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signature Pad</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 
-<body>
-    <div class="container">
-        <h3 class="center-align">Signature Pad</h3>
-        <div class="row">
-            <div class="col s12">
-                <div class="card">
-                    <div class="card-content">
-                        <canvas id="signature-pad"></canvas>
-                    </div>
-                    <div class="card-action">
-                        <div class="row">
-                            <div class="col s12 m4">
-                                <label for="thickness">Thickness</label>
-                                <input type="range" id="thickness" min="1" max="10" value="2">
-                            </div>
-                            <div class="col s12 m4">
-                                <label for="color">Color</label>
-                                <input type="color" id="color" value="#000000">
-                            </div>
-                            <div class="col s12 m4 center-align">
-                                <button id="clear" class="btn red darken-1 waves-effect waves-light">
-                                    <i class="material-icons left">clear</i>Clear
-                                </button>
-                                <button id="download-png" class="btn green darken-1 waves-effect waves-light">
-                                    <i class="material-icons left">file_download</i>PNG
-                                </button>
-                                <button id="download-jpg" class="btn blue darken-1 waves-effect waves-light">
-                                    <i class="material-icons left">file_download</i>JPG
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="container mx-auto p-4 bg-white shadow-lg rounded-lg">
+        <h3 class="text-center text-2xl font-semibold mb-4">Signature Pad</h3>
+        <div class="relative">
+            <canvas id="signature-pad" class="border border-gray-300 rounded-md w-full h-64 md:h-96"></canvas>
+            <div class="absolute inset-0 flex flex-col justify-center items-center opacity-50 pointer-events-none">
+                <p class="text-gray-500 text-xl">Sign here</p>
             </div>
         </div>
+        <div class="flex flex-wrap mt-4 gap-4 justify-center">
+            <div class="flex items-center">
+                <label for="thickness" class="mr-2 text-gray-700">Thickness</label>
+                <input type="range" id="thickness" min="1" max="10" value="2" class="form-range">
+            </div>
+            <div class="flex items-center">
+                <label for="color" class="mr-2 text-gray-700">Color</label>
+                <input type="color" id="color" value="#000000" class="color-picker">
+            </div>
+        </div>
+        <div class="flex justify-center mt-4 gap-2">
+            <button id="clear" class="btn btn-red">
+                <i class="fas fa-trash-alt mr-1"></i> Clear
+            </button>
+            <button id="download-png" class="btn btn-green">
+                <i class="fas fa-file-image mr-1"></i> PNG
+            </button>
+            <button id="download-jpg" class="btn btn-blue">
+                <i class="fas fa-file-image mr-1"></i> JPG
+            </button>
+            <button id="download-pdf" class="btn btn-purple">
+                <i class="fas fa-file-pdf mr-1"></i> PDF
+            </button>
+        </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
     <script src="script.js"></script>
 </body>
 
