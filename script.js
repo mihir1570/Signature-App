@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const downloadJpgButton = document.getElementById("download-jpg");
     const thicknessInput = document.getElementById("thickness");
     const colorInput = document.getElementById("color");
+    const signatureText = document.querySelector('.absolute');
+
 
     // Set canvas resolution
     const dpi = window.devicePixelRatio || 1;
@@ -37,6 +39,9 @@ document.addEventListener("DOMContentLoaded", function () {
         points[points.length - 1].push({ x, y });
         ctx.beginPath();
         ctx.moveTo(x, y);
+
+        // Hide signature text when drawing starts
+        signatureText.style.display = 'none';
     }
 
     function draw(event) {
