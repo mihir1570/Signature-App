@@ -15,44 +15,44 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let isDrawing = false;
     let hasDrawn = false;
-    let lastX = 0;
-    let lastY = 0;
+    let points = [];
 
     function resizeCanvas() {
-        // Set canvas resolution
         const dpi = window.devicePixelRatio || 1;
         canvas.width = canvas.clientWidth * dpi;
         canvas.height = canvas.clientHeight * dpi;
         ctx.scale(dpi, dpi);
-
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
         ctx.lineWidth = thicknessInput.value;
         ctx.strokeStyle = colorInput.value;
-        if (!hasDrawn) {
-            clearCanvas(); // Clear the canvas to apply new settings
-        }
+
+        redraw(); // Redraw the signature when the canvas is resized
     }
 
     function startDrawing(event) {
         isDrawing = true;
-        [lastX, lastY] = getMousePos(event);
+        points.push([]);
+        const [x, y] = getMousePos(event);
+        points[points.length - 1].push({ x, y });
         ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
+        ctx.moveTo(x, y);
     }
 
     function draw(event) {
         if (!isDrawing) return;
         const [x, y] = getMousePos(event);
+        points[points.length - 1].push({ x, y });
         ctx.lineTo(x, y);
         ctx.stroke();
-        [lastX, lastY] = [x, y];
         hasDrawn = true;
     }
 
     function stopDrawing() {
+        if (!isDrawing) return;
         isDrawing = false;
         ctx.closePath();
+        smoothSignature(points[points.length - 1]);
     }
 
     function getMousePos(event) {
@@ -65,7 +65,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function clearCanvas() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        points = [];
         hasDrawn = false;
+    }
+
+    function redraw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = thicknessInput.value;
+        ctx.strokeStyle = colorInput.value;
+
+        points.forEach(stroke => {
+            if (stroke.length < 2) return;
+            ctx.beginPath();
+            ctx.moveTo(stroke[0].x, stroke[0].y);
+            for (let i = 1; i < stroke.length - 2; i++) {
+                const xc = (stroke[i].x + stroke[i + 1].x) / 2;
+                const yc = (stroke[i].y + stroke[i + 1].y) / 2;
+                ctx.quadraticCurveTo(stroke[i].x, stroke[i].y, xc, yc);
+            }
+            ctx.quadraticCurveTo(
+                stroke[stroke.length - 2].x,
+                stroke[stroke.length - 2].y,
+                stroke[stroke.length - 1].x,
+                stroke[stroke.length - 1].y
+            );
+            ctx.stroke();
+            ctx.closePath();
+        });
     }
 
     function downloadCanvas(format) {
@@ -73,6 +101,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Please sign before downloading.");
             return;
         }
+        const link = document.createElement('a');
         if (format === 'jpeg') {
             const tempCanvas = document.createElement('canvas');
             tempCanvas.width = canvas.width;
@@ -81,24 +110,37 @@ document.addEventListener("DOMContentLoaded", function () {
             tempCtx.fillStyle = '#fff'; // Set white background
             tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
             tempCtx.drawImage(canvas, 0, 0);
-            const link = document.createElement('a');
             link.href = tempCanvas.toDataURL(`image/${format}`);
-            link.download = `signature.${format}`;
-            link.click();
         } else {
-            const link = document.createElement('a');
             link.href = canvas.toDataURL(`image/${format}`);
-            link.download = `signature.${format}`;
-            link.click();
         }
+        link.download = `signature.${format}`;
+        link.click();
     }
 
     function updateThickness() {
         ctx.lineWidth = this.value;
+        redraw();
     }
 
     function updateColor() {
         ctx.strokeStyle = this.value;
+        redraw();
+    }
+
+    function smoothSignature(points) {
+        if (points.length < 3) return;
+        const stroke = [];
+        stroke.push(points[0]);
+        for (let i = 1; i < points.length - 2; i++) {
+            const xc = (points[i].x + points[i + 1].x) / 2;
+            const yc = (points[i].y + points[i + 1].y) / 2;
+            stroke.push({ x: xc, y: yc });
+        }
+        stroke.push(points[points.length - 1]);
+        points.length = 0;
+        points.push(...stroke);
+        redraw();
     }
 
     canvas.addEventListener("mousedown", startDrawing);
